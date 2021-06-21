@@ -14,6 +14,9 @@ npx cap sync
 <docgen-index>
 
 * [`echo(...)`](#echo)
+* [`connectPrinter(...)`](#connectprinter)
+* [`printText(...)`](#printtext)
+* [`printPDF(...)`](#printpdf)
 
 </docgen-index>
 
@@ -31,6 +34,51 @@ echo(options: { value: string; }) => Promise<{ value: string; }>
 | **`options`** | <code>{ value: string; }</code> |
 
 **Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+
+--------------------
+
+
+### connectPrinter(...)
+
+```typescript
+connectPrinter(options: { value: string; }) => Promise<any>
+```
+
+| Param         | Type                            |
+| ------------- | ------------------------------- |
+| **`options`** | <code>{ value: string; }</code> |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
+
+--------------------
+
+
+### printText(...)
+
+```typescript
+printText(options: { text: string; }) => Promise<any>
+```
+
+| Param         | Type                           |
+| ------------- | ------------------------------ |
+| **`options`** | <code>{ text: string; }</code> |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
+
+--------------------
+
+
+### printPDF(...)
+
+```typescript
+printPDF(options: { base64: string; }) => Promise<any>
+```
+
+| Param         | Type                             |
+| ------------- | -------------------------------- |
+| **`options`** | <code>{ base64: string; }</code> |
+
+**Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
 
