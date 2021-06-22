@@ -1,11 +1,11 @@
-# zebralib
+# zebra-capacitor
 
 zebra printer capacitor plugin library
 
 ## Install
 
 ```bash
-npm install zebralib
+npm install @dolosplus/zebra-capacitor
 npx cap sync
 ```
 
