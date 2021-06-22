@@ -1,7 +1,7 @@
 {
-  "name": "zebralib",
-  "version": "0.0.1",
-  "description": "zebra printer capacitor plugin library",
+  "name": "@dolosplus/zebra-capacitor",
+  "version": "0.0.3",
+  "description": "Zebra printer capacitor plugin library with ZSDK API",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",
@@ -41,7 +41,9 @@
     "build": "npm run clean && npm run docgen && tsc && rollup -c rollup.config.js",
     "clean": "rimraf ./dist",
     "watch": "tsc --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "publish": "npm run standard-version && npm publish --access public",
+    "release": "standard-version"
   },
   "devDependencies": {
     "@capacitor/android": "^3.0.0",
