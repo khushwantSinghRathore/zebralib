@@ -1,6 +1,6 @@
 {
   "name": "@dolosplus/zebra-capacitor",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Zebra printer capacitor plugin library with ZSDK API",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
