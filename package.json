@@ -1,6 +1,6 @@
 {
   "name": "@dolosplus/zebra-capacitor",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Zebra printer capacitor plugin library with ZSDK API",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -11,7 +11,7 @@
     "android/build.gradle",
     "dist/",
     "ios/Plugin/",
-    "Zebralib.podspec"
+    "DolosplusZebraCapacitor.podspec"
   ],
   "author": "Jak Ratiwanich",
   "license": "MIT",
@@ -42,7 +42,7 @@
     "clean": "rimraf ./dist",
     "watch": "tsc --watch",
     "prepublishOnly": "npm run build",
-    "publish": "npm run standard-version && npm publish --access public",
+    "publish": "npm publish --access public",
     "release": "standard-version"
   },
   "devDependencies": {
