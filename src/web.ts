@@ -4,12 +4,12 @@ import type { ZebraLibPlugin } from './definitions';
 
 export class ZebraLibWeb extends WebPlugin implements ZebraLibPlugin {
 
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
-  }
+  // async echo(options: { value: string }): Promise<{ value: string }> {
+  //   console.log('ECHO', options);
+  //   return options;
+  // }
 
-  async connectPrinter(options: { value: string }): Promise<any>{
+  async connectPrinter(options: { config: string }): Promise<any>{
     return options;
   }
 

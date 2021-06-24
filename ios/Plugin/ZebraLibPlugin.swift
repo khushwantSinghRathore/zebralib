@@ -8,22 +8,41 @@ import Capacitor
  */
 @objc(ZebraLibPlugin)
 public class ZebraLibPlugin: CAPPlugin {
-    //private let zebra = ZebraLib()
+    
+    //private var observers: [NSObjectProtocol] = []
     private var zebra = ZebraLib.sharedInstance
 
-    @objc func echo(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-        call.resolve([
-            "value": zebra.echo(value)
-        ])
+//    @objc func echo(_ call: CAPPluginCall) {
+//        let value = call.getString("value") ?? ""
+//        call.resolve([
+//            "value": zebra.echo(value)
+//        ])
+//    }
+
+    override public func load() {
+        print("Loading Zebra plugin")
+        //start extension delegate
+        zebra.connectionDelegate = self
+    }
+    
+    deinit {
+        print("Deinitialize Zebra plugin")
     }
 
-
     @objc func connectPrinter(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-          call.resolve([
-            "result":  zebra.connectPrinter(value)
-        ])
+        let config = call.getString("config") ?? ""
+        
+        let status = zebra.connectPrinter(config)
+        if(status){
+            call.resolve(["result": status])
+        }else{
+            call.reject("Failed to connect to printer")
+        }
+        
+//        guard canConnect
+//          call.resolve([
+//            "result":  zebra.connectPrinter(value)
+//        ])
        
     }
 
@@ -44,4 +63,11 @@ public class ZebraLibPlugin: CAPPlugin {
     }
 
 
+}
+
+extension ZebraLibPlugin: EAAccessoryManagerConnectionStatusDelegate {
+    func changePrinterStatus() {
+        print("changePrinterStatus()----> \(String(describing: zebra.isConnected))")
+        notifyListeners("printerStatusChange", data: ["isActive": zebra.isConnected])
+    }
 }

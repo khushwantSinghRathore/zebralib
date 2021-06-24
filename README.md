@@ -13,40 +13,26 @@ npx cap sync
 
 <docgen-index>
 
-* [`echo(...)`](#echo)
 * [`connectPrinter(...)`](#connectprinter)
 * [`printText(...)`](#printtext)
 * [`printPDF(...)`](#printpdf)
+* [`addListener(...)`](#addlistener)
+* [Interfaces](#interfaces)
 
 </docgen-index>
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-### echo(...)
-
-```typescript
-echo(options: { value: string; }) => Promise<{ value: string; }>
-```
-
-| Param         | Type                            |
-| ------------- | ------------------------------- |
-| **`options`** | <code>{ value: string; }</code> |
-
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
-
---------------------
-
-
 ### connectPrinter(...)
 
 ```typescript
-connectPrinter(options: { value: string; }) => Promise<any>
+connectPrinter(options: { config: string; }) => Promise<any>
 ```
 
-| Param         | Type                            |
-| ------------- | ------------------------------- |
-| **`options`** | <code>{ value: string; }</code> |
+| Param         | Type                             |
+| ------------- | -------------------------------- |
+| **`options`** | <code>{ config: string; }</code> |
 
 **Returns:** <code>Promise&lt;any&gt;</code>
 
@@ -81,5 +67,31 @@ printPDF(options: { base64: string; }) => Promise<any>
 **Returns:** <code>Promise&lt;any&gt;</code>
 
 --------------------
+
+
+### addListener(...)
+
+```typescript
+addListener(eventName: 'printerStatusChange', listenerFunc: StateChangeListener) => Promise<PluginListenerHandle> & PluginListenerHandle
+```
+
+| Param              | Type                                          |
+| ------------------ | --------------------------------------------- |
+| **`eventName`**    | <code>"printerStatusChange"</code>            |
+| **`listenerFunc`** | <code>(state: ConnectState) =&gt; void</code> |
+
+**Returns:** <code>Promise&lt;<a href="#pluginlistenerhandle">PluginListenerHandle</a>&gt; & <a href="#pluginlistenerhandle">PluginListenerHandle</a></code>
+
+--------------------
+
+
+### Interfaces
+
+
+#### PluginListenerHandle
+
+| Prop         | Type                                      |
+| ------------ | ----------------------------------------- |
+| **`remove`** | <code>() =&gt; Promise&lt;void&gt;</code> |
 
 </docgen-api>

@@ -9,6 +9,11 @@ enum CommonPrintingFormat: String {
 
 @objc public class ZebraLib: NSObject {
     
+    enum ValidationError: Error {
+          case notConnected
+          case failedToPrint
+    }
+    
     var manager: EAAccessoryManager!
     var isConnected: Bool = false
     var connectionDelegate: EAAccessoryManagerConnectionStatusDelegate?
@@ -26,7 +31,7 @@ enum CommonPrintingFormat: String {
  
     }
     
-    public func initPrinterConnection(){
+    public func initPrinterConnection() throws{
         manager = EAAccessoryManager.shared()
         self.findConnectedPrinter { [weak self] bool in
             if let strongSelf = self {
@@ -36,21 +41,27 @@ enum CommonPrintingFormat: String {
         //setup Observer Notifications
         disconnectNotificationObserver = NotificationCenter.default.addObserver(forName: Notification.Name.EAAccessoryDidDisconnect, object: nil, queue: nil, using: didDisconnect)
         connectedNotificationObserver = NotificationCenter.default.addObserver(forName: Notification.Name.EAAccessoryDidConnect, object: nil, queue: nil, using: didConnect)
+        
+        
         manager.registerForLocalNotifications()
         
-        print("::CAPACITOR: ZebraLib.initPrinterConnection()")
+        print("::CAPACITOR: ZebraLib.initPrinterConnection()",self.isConnected)
+        
+        guard self.isConnected else{
+            throw ValidationError.notConnected
+        }
     }
     
     
     private func didDisconnect(notification: Notification) {
         isConnected = false
-        connectionDelegate?.changeLabelStatus()
+        connectionDelegate?.changePrinterStatus()
         print("::CAPACITOR: ZebraLib.didDisconnect()")
     }
 
     private func didConnect(notification: Notification) {
         isConnected = true
-        connectionDelegate?.changeLabelStatus()
+        connectionDelegate?.changePrinterStatus()
         print("::CAPACITOR: ZebraLib.didConnect()")
     }
     
@@ -210,11 +221,11 @@ enum CommonPrintingFormat: String {
         }
     }
 
-    @objc public func echo(_ value: String) -> String {
-        print("::CAPACITOR: echo() - ")
-        initPrinterConnection();
-        return value
-    }
+//    @objc public func echo(_ value: String) -> String {
+//        print("::CAPACITOR: echo() - ")
+//        //initPrinterConnection();
+//        return value
+//    }
 
     @objc public func printPDF(_ base64: String) -> String {
         print("::CAPACITOR: printPDF() - ",base64)
@@ -230,21 +241,27 @@ enum CommonPrintingFormat: String {
         return "some result=" + text;
     }
 
-    @objc public func connectPrinter(_ value: String) -> String {
-        print("::CAPACITOR: Done connectPrinter()")
-        initPrinterConnection();
-         return "some result"
+    @objc public func connectPrinter(_ value: String) -> Bool {
+        do{
+            print("::CAPACITOR: Done connectPrinter()")
+            try initPrinterConnection();
+            return true
+        } catch {
+            let message = "Failed to connect -  error: \(error)"
+            print(message)
+            return false
+        }
      }
 
 }
 
 protocol EAAccessoryManagerConnectionStatusDelegate {
-    func changeLabelStatus() -> Void
+    func changePrinterStatus() -> Void
 }
 
-extension ZebraLib: EAAccessoryManagerConnectionStatusDelegate {
-    func changeLabelStatus() {
-
-        print("changeLabelStatus()----> \(String(describing: isConnected))")
-    }
-}
+//extension ZebraLib: EAAccessoryManagerConnectionStatusDelegate {
+//    func changeLabelStatus() {
+//
+//        print("changeLabelStatus()----> \(String(describing: isConnected))")
+//    }
+//}
