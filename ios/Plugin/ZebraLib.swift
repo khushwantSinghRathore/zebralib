@@ -27,7 +27,7 @@ enum CommonPrintingFormat: String {
     
     public override init() {
         super.init()
-        print("::CAPACITOR: ZebraLib.init()")
+        print("::CAPACITOR:ZEBRALIB: ZebraLib.init()")
  
     }
     
@@ -45,7 +45,7 @@ enum CommonPrintingFormat: String {
         
         manager.registerForLocalNotifications()
         
-        print("::CAPACITOR: ZebraLib.initPrinterConnection()",self.isConnected)
+        print("::CAPACITOR:ZEBRALIB: ZebraLib.initPrinterConnection()",self.isConnected)
         
         guard self.isConnected else{
             throw ValidationError.notConnected
@@ -56,13 +56,13 @@ enum CommonPrintingFormat: String {
     private func didDisconnect(notification: Notification) {
         isConnected = false
         connectionDelegate?.changePrinterStatus()
-        print("::CAPACITOR: ZebraLib.didDisconnect()")
+        print("::CAPACITOR:ZEBRALIB: ZebraLib.didDisconnect()")
     }
 
     private func didConnect(notification: Notification) {
         isConnected = true
         connectionDelegate?.changePrinterStatus()
-        print("::CAPACITOR: ZebraLib.didConnect()")
+        print("::CAPACITOR:ZEBRALIB: ZebraLib.didConnect()")
     }
     
     deinit {
@@ -80,10 +80,10 @@ enum CommonPrintingFormat: String {
         {
         
             do{
-                print("::CAPACITOR: ZebraLib.initZebraPrinter()")
+                print("::CAPACITOR:ZEBRALIB: ZebraLib.initZebraPrinter()")
                 self.zebraPrinter   =  try? ZebraPrinterFactory.getInstance(self.printerConnection)
                 let lang =  self.zebraPrinter?.getControlLanguage()
-                print("::CAPACITOR: Printer Lang: \(String(describing: lang))")
+                print("::CAPACITOR:ZEBRALIB: Printer Lang: \(String(describing: lang))")
             }catch{
                 print("ERROR: connectToPrinter \(error)")
             }
@@ -98,13 +98,13 @@ enum CommonPrintingFormat: String {
     
     private func connectToPrinter( completion: (Bool) -> Void) {
         
-        print("::CAPACITOR: connectToPrinter()",serialNumber)
+        print("::CAPACITOR:ZEBRALIB: connectToPrinter()",serialNumber)
         
         printerConnection = MfiBtPrinterConnection(serialNumber: serialNumber)
         printerConnection?.open()
         printerConnection?.setTimeToWaitAfterWriteInMilliseconds(60)
         initZebraPrinter()
-        print("::CAPACITOR: connectToPrinter() COMPLETE" )
+        print("::CAPACITOR:ZEBRALIB: connectToPrinter() COMPLETE" )
         completion(true)
         
     }
@@ -114,8 +114,9 @@ enum CommonPrintingFormat: String {
     }
 
     
-    func printBase64PDFPages(base64: String){
+    func printBase64PDFPages(base64: String)->Bool{
 
+        
         let pdfDoc:CGPDFDocument = base64TOPDFDoc(base64String: base64)
         if(pdfDoc.numberOfPages>0){
             for n in 1...(pdfDoc.numberOfPages) {
@@ -123,10 +124,16 @@ enum CommonPrintingFormat: String {
                 //convert pdf page to an image
                 let imagePDF = pdfPageToImage(pdfPage: pdfDoc.page(at: n)!)
                 //displayPDFPage(imagePage: imagePDF)
-     
-                printImage(image: imagePDF)
+                do{
+                    try printImage(image: imagePDF)
+                }catch{
+                    print("::CAPACITOR:ZEBRALIB: ERROR: printBase64PDFPages()",error)
+                    return false;
+                }
             }
         }
+        
+        return true
         
     }
     
@@ -158,22 +165,29 @@ enum CommonPrintingFormat: String {
         return pdfDoc
      }
     
-    func printImage(image: UIImage){
+    func printImage(image: UIImage) throws -> Bool {
         do {
             weak var graphicsUtil = self.zebraPrinter?.getGraphicsUtil()
 
             //paper size 384x288 per sq in
-            var success = try graphicsUtil?.print(
+            let success:Any = try graphicsUtil?.print(
                 image.cgImage,
                 atX: 0,
                 atY: 0,
                 withWidth: 768,
                 withHeight: 576,
-                andIsInsideFormat: false)
+                andIsInsideFormat: false) as Any
             
-            print("print status: \(String(describing: success))")
+            print("::CAPACITOR:ZEBRALIB: print status: ",success)
+            if(success != nil){
+                return true
+            }else{
+                return false
+            }
+     
         } catch {
-            print("ERROR:")
+            print("::CAPACITOR:ZEBRALIB: ERROR: printImage()",error)
+            throw error
         }
     }
     
@@ -195,8 +209,8 @@ enum CommonPrintingFormat: String {
 
     
     public func writeToPrinter(with data: Data) {
-        print("::CAPACITOR: writeToPrinter()")
-        print(String(data: data, encoding: String.Encoding.utf8) as String?)
+        print("::CAPACITOR:ZEBRALIB: writeToPrinter()")
+        print(String(data: data, encoding: String.Encoding.utf8) as String? as Any)
         connectToPrinter(completion: { _ in
             var error:NSError?
             printerConnection?.write(data, error: &error)
@@ -204,7 +218,7 @@ enum CommonPrintingFormat: String {
             if error != nil {
                 print("Error executing data writing \(String(describing: error))")
             }
-            print("::CAPACITOR: ================================= done printing ================================================")
+            print("::CAPACITOR:ZEBRALIB: ================================= done printing ================================================")
         })
     }
 
@@ -222,28 +236,27 @@ enum CommonPrintingFormat: String {
     }
 
 //    @objc public func echo(_ value: String) -> String {
-//        print("::CAPACITOR: echo() - ")
+//        print("::CAPACITOR:ZEBRALIB: echo() - ")
 //        //initPrinterConnection();
 //        return value
 //    }
 
-    @objc public func printPDF(_ base64: String) -> String {
-        print("::CAPACITOR: printPDF() - ",base64)
-        printBase64PDFPages(base64: base64)
-        return "some result"
+    @objc public func printPDF(_ base64: String) -> Bool {
+        print("::CAPACITOR:ZEBRALIB: printPDF() data:...",base64.prefix(10))//only log partial data
+        return printBase64PDFPages(base64: base64)
     }
 
 
     @objc public func printText(_ text: String) -> String {
-        print("::CAPACITOR: printText() - calling Zebralib in echo Swift",text)
+        print("::CAPACITOR:ZEBRALIB: printText() - calling Zebralib in echo Swift",text)
         printTextLabel(label: text)
-        print("::CAPACITOR: printText() - Done calling MfiBtPrinterConnection")
+        print("::CAPACITOR:ZEBRALIB: printText() - Done calling MfiBtPrinterConnection")
         return "some result=" + text;
     }
 
     @objc public func connectPrinter(_ value: String) -> Bool {
         do{
-            print("::CAPACITOR: Done connectPrinter()")
+            print("::CAPACITOR:ZEBRALIB: Done connectPrinter()")
             try initPrinterConnection();
             return true
         } catch {

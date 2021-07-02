@@ -57,9 +57,19 @@ public class ZebraLibPlugin: CAPPlugin {
 
     @objc func printPDF(_ call: CAPPluginCall) {
         let base64 = call.getString("base64") ?? ""
-        call.resolve([
-            "result": zebra.printPDF(base64)
-        ])
+//        call.resolve([
+//            "result": zebra.printPDF(base64)
+//        ])
+        
+        let status = zebra.printPDF(base64)
+        if(status){
+            print("ZebraLibPlugin:printPDF() result",status)
+            call.resolve(["result": status])
+        }else{
+            call.reject("Failed to connect to printer")
+        }
+        
+        
     }
 
 

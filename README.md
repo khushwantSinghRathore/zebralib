@@ -1,6 +1,8 @@
 # zebra-capacitor
 
-zebra printer capacitor plugin library
+Zebra printer capacitor plugin library for iOS. Ionic Capacitor v3 wrapper with ZSDK_API. Support base64 PDF and regular Text printing.
+
+Only tested with ZQ520 and ZQ521. Should work for all Zebra Bluetooth printers. Android is not yet supported at the moment unless someone wants to contribute to this repo. Contact me at [DOLOS+](http://dolosplus.com/contact.html)
 
 ## Install
 
